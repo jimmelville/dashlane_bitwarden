@@ -13,7 +13,20 @@ class BitwardenCredential:
         self.login_username = login_username
         self.login_password = login_password
         self.login_totp = login_totp
-
+    
+    def to_dict(self):
+        return {'folder': self.folder,
+        'favorite': self.favorite,
+        'type': self.type,
+        'name': self.name,
+        'notes': self.notes,
+        'fields': self.fields,
+        'reprompt': self.reprompt,
+        'login_uri': self.login_uri,
+        'login_username': self.login_username,
+        'login_password': self.login_password,
+        'login_totp': self.login_totp
+        }
 
 class DashlaneCredential:
     def __init__(self, username, username2, username3, title, password, note, url, category, otpSecret):
@@ -62,16 +75,10 @@ with open('credentials.csv', newline='', encoding='utf-8-sig') as csvfile:
                                                  row['category'], 
                                                  row['otpSecret']))
 
-bitwarden_creds = [cred.asBitwarden() for cred in dashlane_creds]
+bitwarden_creds = [cred.asBitwarden().to_dict() for cred in dashlane_creds]
 
-for bw_cred in bitwarden_creds:
-    print (f"title: {bw_cred.name}")
-
-
-
-
-
-
-
-        
+with open('bitwarden_credentials.csv', 'w', newline='') as f:
+    w = csv.DictWriter(f, bitwarden_creds[0].keys())
+    w.writeheader()
+    w.writerows(bitwarden_creds)
     
